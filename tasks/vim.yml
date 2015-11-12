@@ -1,0 +1,8 @@
+- file: path={{ icinga2_vim_config_path }}/{{ item }} state=directory
+  with_items:
+    - syntax
+    - ftdetect
+- file: src="/usr/share/icinga2-common/syntax/vim/{{ item }}/icinga2.vim" path={{ icinga2_vim_config_path }}/{{ item }}/icinga2.vim state=link
+  with_items:
+    - syntax
+    - ftdetect

@@ -1,0 +1,22 @@
+- name: install postgresql
+  apt: name={{ item }} state=present
+  with_items:
+    - python-psycopg2
+    - postgresql
+    - icinga2-ido-pgsql
+
+- name: backup actual pg_hba.conf
+  fetch: src={{ icinga2_db_postgresql_pg_hba_conf_path }} dest=/tmp/{{ ansible_hostname }}-pg_hba.conf flat=yes
+
+- name: temporary change pg_hba.conf
+  copy: src=pg_hba.conf dest={{ icinga2_db_postgresql_pg_hba_conf_path }} owner=postgres group=postgres mode=640
+  notify: restart postgres
+
+- name: create postgre DB
+  postgresql_db: name={{ icinga2_db_name }} encoding='UTF-8'
+
+- name: create postgres user
+  postgresql_user: name={{ icinga2_db_user_name }} password={{ icinga2_db_user_passwd }}
+
+- name: restore pg_hba.conf
+  copy: src=/tmp/{{ ansible_hostname }}-pg_hba.conf dest={{ icinga2_db_postgresql_pg_hba_conf_path }} owner=postgres group=postgres mode=640

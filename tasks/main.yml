@@ -2,4 +2,11 @@
 # tasks file for ansible-icinga2
 
 - name: install package
-  apt: name=
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - icinga2
+    - icinga2-common
+    - vim
+- include: vim.yml
+- include: pgsql.yml
+  gather_facts: False

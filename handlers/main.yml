@@ -1,2 +1,5 @@
 ---
 # handlers file for ansible-icinga2
+
+- name: restart postgres
+  service: name=postgresql state=restarted
