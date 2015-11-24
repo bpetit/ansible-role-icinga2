@@ -7,6 +7,10 @@
     - icinga2
     - icinga2-common
     - vim
+    - php5
+    - php5-intl
+    - php5-imagick
+    - php5-pgsql
 - include: vim.yml
 - include: pgsql.yml
-  gather_facts: False
+- include: web.yml

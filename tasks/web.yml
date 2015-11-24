@@ -1,0 +1,30 @@
+- name: install apache2
+  apt: name=apache2 state=present
+
+- name: set php timezone
+  lineinfile: dest={{ item }} line="date.timezone = {{ icinga2_timezone }}" insertafter=";date.timezone ="
+  with_items:
+    - /etc/php5/apache2/php.ini
+    - /etc/php5/cli/php.ini
+  notify: restart apache2
+
+- name: enable icinga2 command feature
+  file: src=/etc/icinga2/features-available/command.conf dest=/etc/icinga2/features-enabled/command.conf owner=root group=nagios state=link
+  notify: restart icinga2
+  register: result
+
+- name: test
+  debug: var=result
+  notify: restart icinga2
+
+- name: allow ww-data user to deal with icinga2
+  user: name=www-data groups=nagios append=yes
+
+- name: authenticate icinga repository
+  apt_key: url='http://packages.icinga.org/icinga.key' state=present
+
+- name: add icinga repository for debian to get icinga web 2
+  apt_repository: repo='deb http://packages.icinga.org/debian icinga-jessie main' state=present update_cache=yes
+
+- name: install icinga web 2
+  apt: name=icingaweb2 state=present
