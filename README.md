@@ -1,17 +1,25 @@
-Role Name
-=========
+Icinga2
+=======
 
-A brief description of the role goes here.
+This role provides Icinga2 monitoring instance installation and configuration.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Ansible: 1.9.3
+
+Log as root on the remote host (ansible-playbook -u root)
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+    icinga2_vim_config_path
+    icinga2_db_user_passwd
+    icinga2_db_user_name
+    icinga2_db_name
+    icinga2_db_postgresql_version
+    icinga2_db_postgresql_pg_hba_conf_path
+    icinga2_timezone
 
 Dependencies
 ------------
@@ -21,11 +29,9 @@ A list of other roles hosted on Galaxy should go here, plus any details in regar
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+  - hosts: monitoring
+    roles:
+      - role: icinga2
 
 License
 -------
