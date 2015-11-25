@@ -13,4 +13,4 @@
     - php5-pgsql
 - include: vim.yml
 - include: pgsql.yml
-- include: web.yml
+- include: web.yml tags=web

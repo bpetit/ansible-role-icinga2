@@ -36,3 +36,48 @@
 - name: enable ido-pgsql feature
   file: src=/etc/icinga2/features-available/ido-pgsql.conf dest=/etc/icinga2/features-enabled/ido-pgsql.conf owner=root group=root state=link
   notify: restart icinga2
+
+#- name: create ido pgsql db
+#  sudo: yes
+#  sudo_user: postgres
+#  postgresql_db: name={{ icinga2_ido_pgsql_db_name }} encoding='UTF-8'
+
+- name: does the ido pgsql db schema exist ?
+  sudo: yes
+  sudo_user: postgres
+  shell: psql -d {{ icinga2_ido_pgsql_db_name }} -c "\d"
+  register: result
+
+- name: import ido pgsql db schema
+  sudo: yes
+  sudo_user: postgres
+  shell: psql -d {{ icinga2_ido_pgsql_db_name }} < /usr/share/icinga2-ido-pgsql/schema/pgsql.sql
+  when: "'No relations found' in result.stdout"
+  register: result
+  notify: restart icinga2
+
+  #- name: create ido pgsql db user
+  #  sudo: yes
+  #  sudo_user: postgres
+  #  postgresql_user: name={{ icinga2_ido_pgsql_db_user_name }} password={{ icinga2_ido_pgsql_db_user_passwd }} db={{ icinga2_ido_pgsql_db_name }} priv=ALL state=present
+
+- name: set postgresql privileges for ido pgsql user
+  sudo: yes
+  sudo_user: postgres
+  postgresql_privs: db={{ icinga2_ido_pgsql_db_name }} privs=ALL roles={{ icinga2_ido_pgsql_db_user_name }} type=database
+
+- name: set postgresql privileges for ido pgsql user
+  sudo: yes
+  sudo_user: postgres
+  postgresql_privs: db={{ icinga2_ido_pgsql_db_name }} privs=USAGE,SELECT roles={{ icinga2_ido_pgsql_db_user_name }} type=sequence objs=ALL_IN_SCHEMA
+
+- name: set postgresql privileges for ido pgsql user
+  sudo: yes
+  sudo_user: postgres
+  postgresql_privs: db={{ icinga2_ido_pgsql_db_name }} privs=INSERT,SELECT,UPDATE,DELETE roles={{ icinga2_ido_pgsql_db_user_name }} type=table objs=ALL_IN_SCHEMA
+
+- name: ido configuration file
+  template: src=etc/icinga2/{{ item }} dest=/etc/icinga2/{{ item }} owner=nagios group=nagios
+  with_items:
+    - features-available/ido-pgsql.conf
+  notify: restart icinga2

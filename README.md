@@ -10,6 +10,10 @@ Ansible: 1.9.3
 
 Log as root on the remote host (ansible-playbook -u root)
 
+Tested on:
+
+- Debian Jessie 8.1
+
 Role Variables
 --------------
 
@@ -37,8 +41,3 @@ License
 -------
 
 BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).

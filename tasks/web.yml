@@ -28,3 +28,93 @@
 
 - name: install icinga web 2
   apt: name=icingaweb2 state=present
+
+- name: install pwgen
+  apt: name=pwgen state=present
+
+- name: is there a token already ?
+  shell: test -f /etc/icingaweb2/setup.token
+  register: result
+  changed_when: False
+  ignore_errors: True
+
+- name: check result
+  debug: var=result
+
+- name: generate token
+  shell: pwgen 16 1 > /etc/icingaweb2/setup.token
+  when: result.rc != 0
+
+- name: create icingaweb2 database
+  sudo : yes
+  sudo_user: postgres
+  postgresql_db: name={{ icinga2_web_db_name }} encoding='UTF-8'
+
+- name: create icingaweb2 database user
+  sudo: yes
+  sudo_user: postgres
+  postgresql_user: name={{ icinga2_web_db_user_name }} password={{ icinga2_web_db_user_passwd }} db={{ icinga2_web_db_name }} priv=ALL state=present
+
+- name: is the icingaweb2 database schema imported ?
+  sudo: yes
+  sudo_user: postgres
+  shell: psql -d {{ icinga2_web_db_name }} -c "\d"
+  register: result
+  changed_when: "'No relations found' in result.stdout"
+
+- name: check result
+  debug: var=result
+
+- name: import icinga web 2 db schema
+  sudo: yes
+  sudo_user: postgres
+  shell: psql -d {{ icinga2_web_db_name }} < /usr/share/icingaweb2/etc/schema/pgsql.schema.sql
+  when: "'No relations found' in result.stdout"
+
+- name: set icingaweb2 db user privileges
+  sudo: yes
+  sudo_user: postgres
+  postgresql_privs: database={{ icinga2_web_db_name }} roles={{ icinga2_web_db_user_name }} type={{ item.type }} privs={{ item.privs }} objs={{ item.objs }}
+  with_items:
+    - { type: 'database', privs: 'ALL', objs: "{{ icinga2_web_db_name }}" }
+    - { type: 'sequence', privs: 'USAGE,SELECT', objs: 'ALL_IN_SCHEMA'  }
+    - { type: 'table', privs: 'INSERT,SELECT,UPDATE,DELETE', objs: 'ALL_IN_SCHEMA' }
+
+- name: generate icingaadmin password
+  shell: openssl passwd -1 {{ icinga2_admin_passwd }}
+  register: admin_passwd
+
+- name: is there an admin already ?
+  sudo: yes
+  sudo_user: postgres
+  shell: psql -d {{ icinga2_web_db_name }} -c 'select * from icingaweb_user'
+  register: result
+
+- name: check result
+  debug: var=result
+
+- name: check admin_passwd
+  debug: var=admin_passwd
+
+- name: create icinga admin user
+  sudo: yes
+  sudo_user: postgres
+  command: psql -d {{ icinga2_web_db_name }} -c "insert into icingaweb_user (name, active, password_hash) values ('{{ icinga2_admin_user_name }}', 1, '{{ admin_passwd.stdout }}')"
+  when: "'0 rows' in result.stdout"
+
+- name: ensure moniroting module configuration folder exists
+  file: state=directory path=/etc/icingaweb2/modules/monitoring
+
+- name: configuration files
+  template: src=etc/icingaweb2/{{ item }} dest=/etc/icingaweb2/{{ item }} owner=nagios group=nagios
+  with_items:
+    - authentication.ini
+    - config.ini
+    - modules/monitoring/backends.ini
+    - modules/monitoring/commandtransports.ini
+    - modules/monitoring/config.ini
+    - resources.ini
+    - roles.ini
+  notify:
+    - restart icinga2
+    - restart apache2
