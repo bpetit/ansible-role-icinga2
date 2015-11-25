@@ -33,9 +33,9 @@ A list of other roles hosted on Galaxy should go here, plus any details in regar
 Example Playbook
 ----------------
 
-  - hosts: monitoring
-    roles:
-      - role: icinga2
+      - hosts: monitoring
+        roles:
+          - role: icinga2
 
 License
 -------
