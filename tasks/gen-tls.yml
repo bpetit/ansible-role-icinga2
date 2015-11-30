@@ -1,0 +1,37 @@
+- name: pki is present
+  stat: path={{ item }}
+  with_items:
+    - "{{ icinga2_api_tls_dest_ca_crt_path }}"
+    - "{{ icinga2_api_tls_dest_crt_path }}"
+    - "{{ icinga2_api_tls_dest_key_path }}"
+  register: states
+
+- name: check states
+  debug: var=states
+
+- name: ensure folders are present
+  file: dest={{ item | dirname}} state=directory
+  with_items:
+    - "{{ icinga2_api_tls_dest_ca_crt_path }}"
+    - "{{ icinga2_api_tls_dest_crt_path }}"
+    - "{{ icinga2_api_tls_dest_key_path }}"
+  when: states.results.0.stat.exists==false and states.results.1.stat.exists==false and states.results.2.stat.exists==false
+  register: folders_created
+
+- name: debug folders_created
+  debug: var=folders_created
+
+- name: generate certificate and key files
+  shell: openssl genrsa -out {{ icinga2_api_tls_dest_key_path }} 4096
+  when: folders_created.changed==true
+
+- name: generate certificate and key files
+  shell: openssl req -new -x509 -days 365 -key {{ icinga2_api_tls_dest_key_path }} -out {{ icinga2_api_tls_dest_crt_path }} -subj "/C={{ icinga2_api_tls_country_code }}/ST={{ icinga2_api_tls_st }}/L={{ icinga2_api_tls_l }}/O={{ icinga2_api_tls_org }}/OU={{ icinga2_api_tls_ou }}/CN={{ icinga2_api_tls_cn }}"
+  when: folders_created.changed==true
+
+- name: generate certificate and key files
+  shell: cp {{ icinga2_api_tls_dest_crt_path }} {{ icinga2_api_tls_dest_ca_crt_path }}
+  when: folders_created.changed==true
+
+- name: icinga2 api conf file
+  template: src=etc/icinga2/features-available/api.conf dest={{ icinga2_config_path }}/features-available/api.conf owner=nagios group=nagios mode="u=rw,g=r"

@@ -1,6 +1,7 @@
 ---
 # defaults file for ansible-icinga2
 
+icinga2_config_path: '/etc/icinga2'
 icinga2_vim_config_path: '/root/.vim'
 icinga2_db_user_passwd: 'CHANGEME'
 icinga2_db_user_name: 'icinga2'
@@ -9,8 +10,26 @@ icinga2_db_host: 'localhost'
 icinga2_db_postgresql_versio: '9.4'
 icinga2_db_postgresql_pg_hba_conf_path: '/etc/postgresql/9.4/main/pg_hba.conf'
 icinga2_timezone: 'Europe/Paris'
+icinga2_web_config_path: '/etc/icingaweb2'
 icinga2_web_db_name: 'icingaweb'
 icinga2_web_db_user_name: 'icingaweb'
 icinga2_web_db_user_passwd: 'CHANGEME'
 icinga2_admin_user_name: 'icingaadmin'
 icinga2_admin_passwd: 'CHANGEME'
+icinga2_api_enabled: True
+icinga2_api_gen_tls: True
+icinga2_api_tls_ca_crt_path: ''
+icinga2_api_tls_crt_path: ''
+icinga2_api_tls_key_path: ''
+icinga2_api_tls_dest_ca_crt_path: "/etc/ssl/icinga2/api/ca_CHANGEME.crt"
+icinga2_api_tls_dest_crt_path: "/etc/ssl/icinga2/api/server_CHANGEME.crt"
+icinga2_api_tls_dest_key_path: "/etc/ssl/icinga2/api/server_CHANGEME.key"
+icinga2_api_tls_country_code: "FR"
+icinga2_api_tls_st: "Paris"
+icinga2_api_tls_l: "Paris"
+icinga2_api_tls_org: "CHANGEME INC"
+icinga2_api_tls_ou: "CHANGEME DPT"
+icinga2_api_tls_cn: "{{ ansible_hostname }}"
+icinga2_api_user_name: 'root'
+icinga2_api_user_passwd: 'CHANGEME'
+icinga2_api_user_permissions: '"objects/query/Host", "objects/query/Service"'

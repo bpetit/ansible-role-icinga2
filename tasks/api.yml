@@ -1,0 +1,12 @@
+- include: gen-tls.yml
+  when: icinga2_api_gen_tls==True
+
+- include: put-tls.yml
+  when: icinga2_api_gen_tls==False
+
+- name: enable api feature
+  file: state=link src=/etc/icinga2/features-available/api.conf dest=/etc/icinga2/features-enabled/api.conf
+
+- name: setup api users
+  template: src=etc/icinga2/conf.d/api-users.conf dest={{ icinga2_config_path }}/conf.d/api-users.conf
+  notify: restart icinga2

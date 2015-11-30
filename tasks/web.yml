@@ -20,12 +20,6 @@
 - name: allow ww-data user to deal with icinga2
   user: name=www-data groups=nagios append=yes
 
-- name: authenticate icinga repository
-  apt_key: url='http://packages.icinga.org/icinga.key' state=present
-
-- name: add icinga repository for debian to get icinga web 2
-  apt_repository: repo='deb http://packages.icinga.org/debian icinga-jessie main' state=present update_cache=yes
-
 - name: install icinga web 2
   apt: name=icingaweb2 state=present
 

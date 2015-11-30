@@ -1,8 +1,14 @@
 ---
 # tasks file for ansible-icinga2
 
-- name: install package
-  apt: name={{ item }} state=present update_cache=yes
+- name: authenticate icinga repository
+  apt_key: url='http://packages.icinga.org/icinga.key' state=present
+
+- name: add icinga repository for debian
+  apt_repository: repo='deb http://packages.icinga.org/debian icinga-jessie main' state=present update_cache=yes
+
+- name: install base packages
+  apt: name={{ item }} state=present
   with_items:
     - icinga2
     - icinga2-common
@@ -14,3 +20,5 @@
 - include: vim.yml
 - include: pgsql.yml
 - include: web.yml tags=web
+- include: api.yml tags=api
+  when: icinga2_api_enabled == True

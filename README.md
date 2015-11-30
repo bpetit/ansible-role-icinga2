@@ -14,17 +14,6 @@ Tested on:
 
 - Debian Jessie 8.1
 
-Role Variables
---------------
-
-    icinga2_vim_config_path
-    icinga2_db_user_passwd
-    icinga2_db_user_name
-    icinga2_db_name
-    icinga2_db_postgresql_version
-    icinga2_db_postgresql_pg_hba_conf_path
-    icinga2_timezone
-
 Dependencies
 ------------
 
