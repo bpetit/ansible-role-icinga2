@@ -1,6 +1,11 @@
 ---
 # tasks file for ansible-icinga2
 
+- name: install required packages
+  apt: name={{ item }} state=present
+  with_items:
+    - python-pycurl
+
 - name: authenticate icinga repository
   apt_key: url='http://packages.icinga.org/icinga.key' state=present
 
