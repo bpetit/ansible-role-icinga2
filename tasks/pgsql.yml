@@ -3,11 +3,12 @@
   with_items:
     - python-psycopg2
     - postgresql
+    - postgresql-client
     - icinga2-ido-pgsql
 
 - name: create postgre DB
-  sudo: yes
-  sudo_user: postgres
+  su: yes
+  su_user: postgres
   postgresql_db: name={{ icinga2_db_name }} encoding='UTF-8'
 
 - name: create postgres user
@@ -28,32 +29,32 @@
   notify: restart icinga2
 
 - name: does the ido pgsql db schema exist ?
-  sudo: yes
-  sudo_user: postgres
+  su: yes
+  su_user: postgres
   shell: psql -d {{ icinga2_db_name }} -c "\d"
   register: result
 
 - name: import ido pgsql db schema
-  sudo: yes
-  sudo_user: postgres
+  su: yes
+  su_user: postgres
   shell: psql -d {{ icinga2_db_name }} < /usr/share/icinga2-ido-pgsql/schema/pgsql.sql
   when: "'No relations found' in result.stdout"
   register: result
   notify: restart icinga2
 
 - name: set postgresql privileges for ido pgsql user
-  sudo: yes
-  sudo_user: postgres
+  su: yes
+  su_user: postgres
   postgresql_privs: db={{ icinga2_db_name }} privs=ALL roles={{ icinga2_db_user_name }} type=database
 
 - name: set postgresql privileges for ido pgsql user
-  sudo: yes
-  sudo_user: postgres
+  su: yes
+  su_user: postgres
   postgresql_privs: db={{ icinga2_db_name }} privs=USAGE,SELECT roles={{ icinga2_db_user_name }} type=sequence objs=ALL_IN_SCHEMA
 
 - name: set postgresql privileges for ido pgsql user
-  sudo: yes
-  sudo_user: postgres
+  su: yes
+  su_user: postgres
   postgresql_privs: db={{ icinga2_db_name }} privs=INSERT,SELECT,UPDATE,DELETE roles={{ icinga2_db_user_name }} type=table objs=ALL_IN_SCHEMA
 
 - name: ido configuration file
