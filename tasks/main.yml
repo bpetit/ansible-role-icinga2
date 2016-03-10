@@ -22,7 +22,6 @@
     - php5-intl
     - php5-imagick
     - php5-pgsql
-- include: vim.yml
 - include: pgsql.yml
 - include: web.yml tags=web
 - include: api.yml tags=api
