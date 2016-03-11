@@ -101,7 +101,7 @@
   file: state=directory path=/etc/icingaweb2/modules/monitoring
 
 - name: configuration files
-  template: src=etc/icingaweb2/{{ item }} dest=/etc/icingaweb2/{{ item }} owner=nagios group=nagios
+  template: src=etc/icingaweb2/{{ item }} dest=/etc/icingaweb2/{{ item }} owner=nagios group=icingaweb2 mode=0662
   with_items:
     - authentication.ini
     - config.ini

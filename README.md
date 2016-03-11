@@ -30,3 +30,8 @@ License
 -------
 
 BSD
+
+Todo
+----
+
+Handle the apache2 restart needed after token validation.
