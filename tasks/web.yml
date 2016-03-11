@@ -20,11 +20,12 @@
 - name: allow ww-data user to deal with icinga2
   user: name=www-data groups=nagios append=yes
 
-- name: install icinga web 2
-  apt: name=icingaweb2 state=present
-
-- name: install pwgen
-  apt: name=pwgen state=present
+- name: install required packages
+  apt: name={{ item }} state=present
+  with_items:
+    - icingaweb2
+    - pwgen
+    - php5-mysql
 
 - name: is there a token already ?
   shell: test -f /etc/icingaweb2/setup.token
