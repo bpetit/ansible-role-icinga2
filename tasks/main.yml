@@ -2,7 +2,7 @@
 # tasks file for ansible-icinga2
 
 - name: install required packages
-  apt: name={{ item }} state=present
+  apt: name={{ item }} state=present update_cache=yes
   with_items:
     - python-pycurl
 

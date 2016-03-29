@@ -57,9 +57,6 @@
   register: result
   changed_when: "'No relations found' in result.stdout"
 
-- name: check result
-  debug: var=result
-
 - name: import icinga web 2 db schema
   sudo: yes
   sudo_user: postgres
@@ -85,19 +82,13 @@
   shell: psql -d {{ icinga2_web_db_name }} -c 'select * from icingaweb_user'
   register: result
 
-- name: check result
-  debug: var=result
-
-- name: check admin_passwd
-  debug: var=admin_passwd
-
 - name: create icinga admin user
   sudo: yes
   sudo_user: postgres
   command: psql -d {{ icinga2_web_db_name }} -c "insert into icingaweb_user (name, active, password_hash) values ('{{ icinga2_admin_user_name }}', 1, '{{ admin_passwd.stdout }}')"
   when: "'0 rows' in result.stdout"
 
-- name: ensure moniroting module configuration folder exists
+- name: ensure monitoring module configuration folder exists
   file: state=directory path=/etc/icingaweb2/modules/monitoring
 
 - name: configuration files

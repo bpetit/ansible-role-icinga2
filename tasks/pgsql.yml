@@ -2,7 +2,7 @@
   apt: name={{ item }} state=present
   with_items:
     - python-psycopg2
-    - postgresql
+    - postgresql-9.4
     - postgresql-client
     - icinga2-ido-pgsql
 
@@ -12,8 +12,8 @@
   postgresql_db: name={{ icinga2_db_name }} encoding='UTF-8'
 
 - name: create postgres user
-  sudo: yes
-  sudo_user: postgres
+  su: yes
+  su_user: postgres
   postgresql_user: name={{ icinga2_db_user_name }} password={{ icinga2_db_user_passwd }}
 
 - name: add icinga2 user access to pg_hba.conf
