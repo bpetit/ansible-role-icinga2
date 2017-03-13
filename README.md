@@ -6,7 +6,7 @@ This role provides Icinga2 monitoring instance installation and configuration.
 Requirements
 ------------
 
-Ansible: 1.9.3
+Ansible: 2.0.1
 
 Log as root on the remote host (ansible-playbook -u root)
 
@@ -34,4 +34,4 @@ BSD
 Todo
 ----
 
-Handle the apache2 restart needed after token validation.
+- Fill configuration files to avoid needing the setup wizard.

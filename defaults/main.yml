@@ -14,9 +14,13 @@ icinga2_web_config_path: '/etc/icingaweb2'
 icinga2_web_db_name: 'icingaweb'
 icinga2_web_db_user_name: 'icingaweb'
 icinga2_web_db_user_passwd: 'CHANGEME'
+icinga2_web_director: True
+icinga2_web_director_db_name: 'director'
+icinga2_web_director_db_user_name: 'director'
+icinga2_web_director_db_user_passwd: 'CHANGEME'
 icinga2_admin_user_name: 'icingaadmin'
 icinga2_admin_passwd: 'CHANGEME'
-icinga2_api_enabled: True
+icinga2_api_enabled: False
 icinga2_api_gen_tls: True
 icinga2_api_tls_ca_crt_path: ''
 icinga2_api_tls_crt_path: ''

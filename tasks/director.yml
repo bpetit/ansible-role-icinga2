@@ -1,0 +1,35 @@
+- name: create director postgres db
+  su: yes
+  su_user: postgres
+  postgresql_db: name={{ icinga2_web_director_db_name }} encoding='UTF-8'
+
+- name: create director postgres user
+  su: yes
+  su_user: postgres
+  postgresql_user: name={{ icinga2_web_director_db_user_name }} password={{ icinga2_web_director_db_user_passwd }}
+
+- name: set director postgres user privileges
+  su: yes
+  su_user: postgres
+  postgresql_privs: db={{ icinga2_web_director_db_name }} privs=ALL roles={{ icinga2_web_director_db_user_name }} type=database
+
+- name: add director related resources.ini config
+  blockinfile:
+    dest: /etc/icingaweb2/resources.ini
+    block: |
+      [Director DB]
+      type = "db"
+      db = "pgsql"
+      host = "localhost"
+      dbname = "{{icinga2_web_director_db_name}}"
+      username = "{{icinga2_web_director_db_user_name}}"
+      password = "{{icinga2_web_director_db_user_passwd}}"
+      charset = "utf8"
+
+- name: create director module directory
+  file: path=/etc/icingaweb2/modules/director state=directory
+
+- name: push director related configuration
+  template: src=etc/icingaweb2/modules/director/{{ item }} dest=/etc/icingaweb2/modules/director/{{ item }} mode=0662
+  with_items:
+    - config.ini

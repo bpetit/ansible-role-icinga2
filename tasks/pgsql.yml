@@ -3,6 +3,7 @@
   with_items:
     - python-psycopg2
     - postgresql-9.4
+    - postgresql-common
     - postgresql-client
     - icinga2-ido-pgsql
 

@@ -17,8 +17,14 @@
   debug: var=result
   notify: restart icinga2
 
+- name: ensure icingaweb2 group exists
+  group: name=icingaweb2 state=present
+
 - name: allow ww-data user to deal with icinga2
   user: name=www-data groups=nagios append=yes
+
+- name: allow ww-data user to deal with icinga2
+  user: name=www-data groups=icingaweb2 append=yes
 
 - name: install required packages
   apt: name={{ item }} state=present

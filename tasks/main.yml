@@ -26,3 +26,5 @@
 - include: web.yml tags=web
 - include: api.yml tags=api
   when: icinga2_api_enabled == True
+#- include: director.yml tags=director
+#  when: icinga2_web_director == True
