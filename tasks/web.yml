@@ -67,7 +67,7 @@
   sudo: yes
   sudo_user: postgres
   shell: psql -d {{ icinga2_web_db_name }} < /usr/share/icingaweb2/etc/schema/pgsql.schema.sql
-  when: "'No relations found' in result.stdout"
+  when: "'No relations' in result.stdout or 'Aucune relation' in result.stdout"
 
 - name: set icingaweb2 db user privileges
   sudo: yes
