@@ -39,7 +39,7 @@
   su: yes
   su_user: postgres
   shell: psql -d {{ icinga2_db_name }} < /usr/share/icinga2-ido-pgsql/schema/pgsql.sql
-  when: "'No relations found' in result.stdout"
+  when: "'No relations' in result.stdout or 'Aucune relation' in result.stdout"
   register: result
   notify: restart icinga2
 
