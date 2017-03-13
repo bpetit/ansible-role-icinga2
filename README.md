@@ -35,3 +35,4 @@ Todo
 ----
 
 - Fill configuration files to avoid needing the setup wizard.
+- Fix the condition "Fix the when condition of the task : TASK [icinga2 : import icinga web 2 db schema]": use a better result element than stdout

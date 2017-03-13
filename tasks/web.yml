@@ -61,7 +61,7 @@
   sudo_user: postgres
   shell: psql -d {{ icinga2_web_db_name }} -c "\d"
   register: result
-  changed_when: "'No relations found' in result.stdout"
+  changed_when: "'No relations' in result.stdout or 'Aucune relation' in result.stdout"
 
 - name: import icinga web 2 db schema
   sudo: yes
