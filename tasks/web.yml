@@ -47,31 +47,31 @@
   when: result.rc != 0
 
 - name: create icingaweb2 database
-  sudo : yes
-  sudo_user: postgres
+  become : yes
+  become_user: postgres
   postgresql_db: name={{ icinga2_web_db_name }} encoding='UTF-8'
 
 - name: create icingaweb2 database user
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_user: name={{ icinga2_web_db_user_name }} password={{ icinga2_web_db_user_passwd }} db={{ icinga2_web_db_name }} priv=ALL state=present
 
 - name: is the icingaweb2 database schema imported ?
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
   shell: psql -d {{ icinga2_web_db_name }} -c "\d"
   register: result
   changed_when: "'No relations' in result.stdout or 'Aucune relation' in result.stdout"
 
 - name: import icinga web 2 db schema
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
   shell: psql -d {{ icinga2_web_db_name }} < /usr/share/icingaweb2/etc/schema/pgsql.schema.sql
   when: "'No relations' in result.stdout or 'Aucune relation' in result.stdout"
 
 - name: set icingaweb2 db user privileges
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_privs: database={{ icinga2_web_db_name }} roles={{ icinga2_web_db_user_name }} type={{ item.type }} privs={{ item.privs }} objs={{ item.objs }}
   with_items:
     - { type: 'database', privs: 'ALL', objs: "{{ icinga2_web_db_name }}" }
@@ -83,14 +83,14 @@
   register: admin_passwd
 
 - name: is there an admin already ?
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
   shell: psql -d {{ icinga2_web_db_name }} -c 'select * from icingaweb_user'
   register: result
 
 - name: create icinga admin user
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
   command: psql -d {{ icinga2_web_db_name }} -c "insert into icingaweb_user (name, active, password_hash) values ('{{ icinga2_admin_user_name }}', 1, '{{ admin_passwd.stdout }}')"
   when: "'0 rows' in result.stdout"
 

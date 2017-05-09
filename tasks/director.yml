@@ -1,16 +1,16 @@
 - name: create director postgres db
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_db: name={{ icinga2_web_director_db_name }} encoding='UTF-8'
 
 - name: create director postgres user
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_user: name={{ icinga2_web_director_db_user_name }} password={{ icinga2_web_director_db_user_passwd }}
 
 - name: set director postgres user privileges
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_privs: db={{ icinga2_web_director_db_name }} privs=ALL roles={{ icinga2_web_director_db_user_name }} type=database
 
 - name: add director related resources.ini config

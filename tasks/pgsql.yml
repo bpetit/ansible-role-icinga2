@@ -8,13 +8,13 @@
     - icinga2-ido-pgsql
 
 - name: create postgre DB
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_db: name={{ icinga2_db_name }} encoding='UTF-8'
 
 - name: create postgres user
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_user: name={{ icinga2_db_user_name }} password={{ icinga2_db_user_passwd }}
 
 - name: add icinga2 user access to pg_hba.conf
@@ -30,32 +30,32 @@
   notify: restart icinga2
 
 - name: does the ido pgsql db schema exist ?
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   shell: psql -d {{ icinga2_db_name }} -c "\d"
   register: result
 
 - name: import ido pgsql db schema
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   shell: psql -d {{ icinga2_db_name }} < /usr/share/icinga2-ido-pgsql/schema/pgsql.sql
   when: "'No relations' in result.stdout or 'Aucune relation' in result.stdout"
   register: result
   notify: restart icinga2
 
 - name: set postgresql privileges for ido pgsql user
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_privs: db={{ icinga2_db_name }} privs=ALL roles={{ icinga2_db_user_name }} type=database
 
 - name: set postgresql privileges for ido pgsql user
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_privs: db={{ icinga2_db_name }} privs=USAGE,SELECT roles={{ icinga2_db_user_name }} type=sequence objs=ALL_IN_SCHEMA
 
 - name: set postgresql privileges for ido pgsql user
-  su: yes
-  su_user: postgres
+  become: yes
+  become_user: postgres
   postgresql_privs: db={{ icinga2_db_name }} privs=INSERT,SELECT,UPDATE,DELETE roles={{ icinga2_db_user_name }} type=table objs=ALL_IN_SCHEMA
 
 - name: ido configuration file
